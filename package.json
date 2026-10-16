@@ -1,0 +1,28 @@
+{
+  "name": "campus-sphere-root",
+  "version": "1.0.0",
+  "description": "CampusSphere — Unified Digital Ecosystem for Higher Education",
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "build": "npm run build:server && npm run build:client",
+    "start": "cd server && npm start",
+    "seed": "cd server && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": [
+    "education",
+    "campus",
+    "mern",
+    "typescript",
+    "simulations",
+    "rbac"
+  ],
+  "author": "CampusSphere Team",
+  "license": "MIT"
+}
