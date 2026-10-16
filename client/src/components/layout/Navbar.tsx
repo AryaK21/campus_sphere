@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  GraduationCap,
   LogOut,
   User as UserIcon,
-  ChevronDown,
   Sun,
   Moon,
   Settings,
@@ -16,6 +14,7 @@ import {
   Briefcase,
   Menu,
   X,
+  ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -25,24 +24,33 @@ export const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showMobileNav, setShowMobileNav] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const navMenuRef = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
+  // Close profile dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
         setShowProfileMenu(false);
+      }
+      if (navMenuRef.current && !navMenuRef.current.contains(e.target as Node)) {
+        // Allow clicks on the toggle button itself
+        const toggleBtn = document.getElementById('menu-toggle-btn');
+        if (toggleBtn && !toggleBtn.contains(e.target as Node)) {
+          setIsMenuOpen(false);
+        }
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Close mobile nav on route change
+  // Close menu on route change
   useEffect(() => {
-    setShowMobileNav(false);
+    setIsMenuOpen(false);
+    setShowProfileMenu(false);
   }, [location.pathname]);
 
   const handleSignOut = async () => {
@@ -58,105 +66,134 @@ export const Navbar: React.FC = () => {
     { label: 'Forum', to: '/forum', icon: MessageSquare },
     { label: 'Notices', to: '/notices', icon: Bell },
     { label: 'Placements', to: '/placements', icon: Briefcase },
+    ...(role === 'Admin' || role === 'Faculty' ? [{ label: 'Admin', to: '/admin', icon: Settings }] : []),
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 dark:bg-dark-secondary/90 backdrop-blur-md border-b border-gray-200 dark:border-dark-border">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+    <header className="fixed top-0 inset-x-0 z-50 pointer-events-none p-3 sm:p-5">
+      <div className="max-w-7xl mx-auto flex items-start justify-between gap-4">
 
-        {/* Left: Brand */}
-        <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center shadow-sm">
-            <GraduationCap className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold text-gray-900 dark:text-gray-100 text-base tracking-tight">
-            Campus<span className="text-cyan-600 dark:text-cyan-400">Sphere</span>
-          </span>
-        </Link>
+        {/* Left: Floating Menu Show/Hide Toggle */}
+        <div className="pointer-events-auto flex items-center gap-2" ref={navMenuRef}>
+          <button
+            id="menu-toggle-btn"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-xl border border-slate-200/80 dark:border-cyan-500/30 text-gray-800 dark:text-gray-100 shadow-xl hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.25)] transition-all duration-200 cursor-pointer font-semibold text-xs tracking-wide"
+            aria-label="Toggle navigation menu"
+          >
+            <div className="w-5 h-5 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+              {isMenuOpen ? <X className="w-3.5 h-3.5" /> : <Menu className="w-3.5 h-3.5" />}
+            </div>
+            <span>{isMenuOpen ? 'Hide Menu' : 'Menu'}</span>
+          </button>
 
-        {/* Center: Desktop Navigation Bar */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.to ||
-              (item.to !== '/' && location.pathname.startsWith(item.to));
+          {/* Desktop Expandable Floating Glass Dock */}
+          {isMenuOpen && (
+            <nav className="hidden lg:flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-slate-200/80 dark:border-cyan-500/30 shadow-2xl animate-fadeIn">
+              {navLinks.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.to ||
+                  (item.to !== '/' && location.pathname.startsWith(item.to));
 
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
-                  isActive
-                    ? 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-dark-tertiary'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{item.label}</span>
-              </NavLink>
-            );
-          })}
-        </nav>
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
+                      isActive
+                        ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-sm'
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/80 dark:hover:bg-slate-800/80'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          )}
 
-        {/* Right side: Theme toggle, Mobile Menu button & Profile */}
-        <div className="flex items-center gap-2">
+          {/* Mobile / Tablet Floating Drawer */}
+          {isMenuOpen && (
+            <div className="lg:hidden fixed top-16 left-4 right-4 sm:left-6 sm:w-80 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/80 dark:border-cyan-500/30 shadow-2xl p-3 space-y-1 z-50 animate-fadeIn">
+              <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 py-1 font-mono">
+                Quick Navigation
+              </p>
+              {navLinks.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.to ||
+                  (item.to !== '/' && location.pathname.startsWith(item.to));
 
-          {/* Theme toggle */}
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 font-semibold border border-cyan-500/30'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-4 h-4 text-cyan-500" />
+                      <span>{item.label}</span>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+                  </NavLink>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Right: Floating Glass User Profile & Theme Toggle */}
+        <div className="pointer-events-auto flex items-center gap-2">
+
+          {/* Floating Theme Toggle Icon */}
           <button
             onClick={toggleTheme}
             id="theme-toggle"
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-dark-tertiary transition-colors cursor-pointer"
+            className="w-10 h-10 rounded-full bg-white/75 dark:bg-slate-900/75 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 shadow-xl hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center transition-all cursor-pointer text-gray-700 dark:text-gray-300"
           >
             {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
           </button>
 
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setShowMobileNav(!showMobileNav)}
-            className="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-dark-tertiary transition-colors cursor-pointer"
-            aria-label="Toggle navigation menu"
-          >
-            {showMobileNav ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-
+          {/* Floating User Profile Icon */}
           {isAuthenticated && user ? (
-            <div className="relative" ref={menuRef}>
+            <div className="relative" ref={profileMenuRef}>
               <button
                 id="profile-menu-btn"
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-2 p-1.5 pl-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-tertiary transition-colors cursor-pointer"
+                className="w-10 h-10 rounded-full ring-2 ring-cyan-500/40 hover:ring-cyan-400 backdrop-blur-xl bg-white/75 dark:bg-slate-900/75 shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center cursor-pointer overflow-hidden p-0.5"
+                aria-label="User Profile"
               >
                 <img
                   src={user.profilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}
                   alt={user.name}
-                  className="w-7 h-7 rounded-full object-cover ring-2 ring-cyan-500/30"
+                  className="w-full h-full rounded-full object-cover"
                 />
-                <div className="hidden sm:block text-left">
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 leading-none">
-                    {user.name.split(' ')[0]}
-                  </p>
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight mt-0.5">
-                    {user.role}
-                  </p>
-                </div>
-                <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
               </button>
 
+              {/* Floating Profile Dropdown */}
               {showProfileMenu && (
                 <div
                   id="profile-dropdown"
-                  className="absolute right-0 mt-1.5 w-52 bg-white dark:bg-dark-secondary rounded-xl border border-gray-200 dark:border-dark-border shadow-card-lg py-1.5 animate-slide-down z-50"
+                  className="absolute right-0 mt-2 w-56 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-2xl border border-slate-200/80 dark:border-cyan-500/30 shadow-2xl py-2 z-50 animate-fadeIn"
                 >
-                  <div className="px-3.5 py-2.5 border-b border-gray-100 dark:border-dark-border mb-1">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{user.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{user.email}</p>
+                  <div className="px-4 py-2.5 border-b border-gray-100 dark:border-slate-800 mb-1">
+                    <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5 font-mono">{user.email}</p>
+                    <span className="inline-block text-[10px] font-semibold uppercase px-2 py-0.5 mt-1.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                      {user.role}
+                    </span>
                   </div>
 
                   <Link
                     to="/dashboard"
                     onClick={() => setShowProfileMenu(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-tertiary rounded-lg mx-1"
+                    className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/70 dark:hover:bg-slate-800/70 rounded-xl mx-1.5 transition-colors"
                   >
                     <LayoutDashboard className="w-4 h-4 text-cyan-500" />
                     Dashboard
@@ -165,7 +202,7 @@ export const Navbar: React.FC = () => {
                   <Link
                     to="/profile"
                     onClick={() => setShowProfileMenu(false)}
-                    className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-tertiary rounded-lg mx-1"
+                    className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/70 dark:hover:bg-slate-800/70 rounded-xl mx-1.5 transition-colors"
                   >
                     <UserIcon className="w-4 h-4 text-gray-400" />
                     My Profile
@@ -175,18 +212,18 @@ export const Navbar: React.FC = () => {
                     <Link
                       to="/admin"
                       onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-2.5 px-3.5 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-tertiary rounded-lg mx-1"
+                      className="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/70 dark:hover:bg-slate-800/70 rounded-xl mx-1.5 transition-colors"
                     >
                       <Settings className="w-4 h-4 text-gray-400" />
                       Admin Panel
                     </Link>
                   )}
 
-                  <div className="border-t border-gray-100 dark:border-dark-border mt-1 pt-1">
+                  <div className="border-t border-gray-100 dark:border-slate-800 mt-1 pt-1">
                     <button
                       id="sign-out-btn"
                       onClick={handleSignOut}
-                      className="flex items-center gap-2.5 w-full px-3.5 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg mx-1 text-left cursor-pointer"
+                      className="flex items-center gap-2.5 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl mx-1 text-left cursor-pointer transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -196,52 +233,17 @@ export const Navbar: React.FC = () => {
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                to="/login"
-                id="login-link"
-                className="px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/login"
-                id="get-started-btn"
-                className="btn-primary text-xs px-3.5 py-1.5"
-              >
-                Get Started
-              </Link>
-            </div>
+            <Link
+              to="/login"
+              id="login-link"
+              className="px-4 py-2 rounded-2xl bg-white/75 dark:bg-slate-900/75 backdrop-blur-xl border border-slate-200/80 dark:border-cyan-500/30 text-gray-800 dark:text-gray-100 shadow-xl hover:border-cyan-400 text-xs font-semibold tracking-wide transition-all"
+            >
+              Sign In
+            </Link>
           )}
         </div>
+
       </div>
-
-      {/* Mobile Drawer Menu */}
-      {showMobileNav && (
-        <div className="md:hidden border-t border-gray-200 dark:border-dark-border bg-white dark:bg-dark-secondary p-3 space-y-1 animate-slide-down">
-          {navLinks.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.to ||
-              (item.to !== '/' && location.pathname.startsWith(item.to));
-
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={() => setShowMobileNav(false)}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 font-semibold'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-tertiary'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span>{item.label}</span>
-              </NavLink>
-            );
-          })}
-        </div>
-      )}
     </header>
   );
 };

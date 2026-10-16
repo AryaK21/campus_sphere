@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/layout/Navbar';
-import { Sidebar } from './components/layout/Sidebar';
 import { Loader2 } from 'lucide-react';
 
 // Pages
@@ -72,32 +71,26 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
 };
 
 // Main App Layout
-const AppLayout: React.FC<{ children: React.ReactNode; showSidebar?: boolean }> = ({
-  children,
-  showSidebar = false,
-}) => {
+const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-surface-secondary dark:bg-dark flex flex-col">
+    <div className="min-h-screen bg-surface-secondary dark:bg-dark flex flex-col relative">
       <Navbar />
-      <div className="flex flex-1">
-        {showSidebar && <Sidebar />}
-        <main className="flex-1 min-w-0">
-          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-6">
-            {children}
-          </div>
-        </main>
-      </div>
+      <main className="flex-1 min-w-0 pt-20 sm:pt-24 px-4 sm:px-6 pb-14">
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
+      </main>
     </div>
   );
 };
 
-// Layout with sidebar (authenticated pages)
+// Protected Layout
 const AuthenticatedLayout: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({
   children,
   allowedRoles,
 }) => (
   <ProtectedRoute allowedRoles={allowedRoles}>
-    <AppLayout showSidebar>{children}</AppLayout>
+    <AppLayout>{children}</AppLayout>
   </ProtectedRoute>
 );
 
@@ -110,13 +103,13 @@ export const App: React.FC = () => {
             {/* Public pages — no sidebar */}
             <Route path="/" element={<AppLayout><LandingPage /></AppLayout>} />
             <Route path="/login" element={<AppLayout><LoginPage /></AppLayout>} />
-            {/* Core pages with sidebar */}
-            <Route path="/simulations" element={<AppLayout showSidebar><SimulationsPage /></AppLayout>} />
-            <Route path="/resources" element={<AppLayout showSidebar><ResourcesPage /></AppLayout>} />
-            <Route path="/forum" element={<AppLayout showSidebar><ForumPage /></AppLayout>} />
-            <Route path="/forum/:id" element={<AppLayout showSidebar><ForumPostDetailPage /></AppLayout>} />
-            <Route path="/notices" element={<AppLayout showSidebar><NoticesPage /></AppLayout>} />
-            <Route path="/placements" element={<AppLayout showSidebar><PlacementsPage /></AppLayout>} />
+            {/* Core pages */}
+            <Route path="/simulations" element={<AppLayout><SimulationsPage /></AppLayout>} />
+            <Route path="/resources" element={<AppLayout><ResourcesPage /></AppLayout>} />
+            <Route path="/forum" element={<AppLayout><ForumPage /></AppLayout>} />
+            <Route path="/forum/:id" element={<AppLayout><ForumPostDetailPage /></AppLayout>} />
+            <Route path="/notices" element={<AppLayout><NoticesPage /></AppLayout>} />
+            <Route path="/placements" element={<AppLayout><PlacementsPage /></AppLayout>} />
 
             {/* OAuth callback */}
             <Route path="/auth/callback" element={<AuthCallback />} />

@@ -82,25 +82,41 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 space-y-6 pb-14 max-w-7xl mx-auto">
+      <div className="relative z-10 space-y-7 pb-14 max-w-7xl mx-auto">
 
-        {/* Clean Welcome Banner (Ugly left title removed) */}
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 dark:border-cyan-500/25 bg-white/85 dark:bg-slate-900/75 backdrop-blur-xl p-6 sm:p-7 shadow-xl">
+        {/* Dual-Layer CAMPUS SPHERE Title Banner */}
+        <div className="relative overflow-hidden rounded-2xl border border-cyan-500/25 bg-slate-900/65 dark:bg-slate-950/75 backdrop-blur-xl p-6 sm:p-8 shadow-2xl text-white">
           {/* Ambient Glow */}
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-600/10 dark:bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-24 -left-24 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 font-mono">
-                {user?.department || 'Computer Engineering'}{user?.semester ? ` · Semester ${user.semester}` : ''}
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white mt-1 tracking-tight">
-                Good morning, {user?.name?.split(' ')[0] || 'there'} 👋
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 mt-1">
-                Logged in as <span className="font-semibold text-gray-700 dark:text-gray-200">{role}</span> · {user?.email}
-              </p>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div className="space-y-3">
+              {/* Dual-layer CAMPUS SPHERE Title */}
+              <div className="select-none tracking-widest font-black uppercase font-mono">
+                <div className="text-4xl sm:text-6xl md:text-7xl font-extrabold bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(56,189,248,0.6)] leading-none">
+                  CAMPUS
+                </div>
+                <div
+                  className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-widest leading-tight mt-1 text-transparent"
+                  style={{
+                    WebkitTextStroke: '2px rgba(255, 255, 255, 0.95)',
+                    textShadow: '0 0 20px rgba(56, 189, 248, 0.4), 0 0 35px rgba(99, 102, 241, 0.3)',
+                  }}
+                >
+                  SPHERE
+                </div>
+              </div>
+
+              {/* Greeting and Metadata */}
+              <div className="pt-1">
+                <p className="text-base sm:text-lg font-medium text-slate-200">
+                  Good morning, {user?.name?.split(' ')[0] || 'there'} 👋
+                </p>
+                <p className="text-xs sm:text-sm text-cyan-300/80 font-mono mt-0.5">
+                  {user?.department || 'Engineering'}{user?.semester ? ` · Semester ${user.semester}` : ''} · {role}
+                </p>
+              </div>
             </div>
 
             {/* Quick Actions */}
@@ -109,7 +125,7 @@ export const DashboardPage: React.FC = () => {
                 <button
                   id="upload-resource-btn"
                   onClick={() => setIsUploadOpen(true)}
-                  className="px-4 py-2.5 rounded-xl font-medium text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-md shadow-cyan-500/20 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl font-medium text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer"
                 >
                   <Upload className="w-4 h-4" />
                   Upload Material
@@ -118,9 +134,9 @@ export const DashboardPage: React.FC = () => {
               <button
                 id="create-post-btn"
                 onClick={() => setIsPostOpen(true)}
-                className="px-4 py-2.5 rounded-xl font-medium text-sm bg-white dark:bg-slate-800/80 hover:bg-gray-50 dark:hover:bg-slate-700/80 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 shadow-sm transition-all duration-200 flex items-center gap-2 backdrop-blur-md cursor-pointer"
+                className="px-4 py-2.5 rounded-xl font-medium text-sm bg-slate-800/85 hover:bg-slate-700/85 border border-slate-700/80 text-slate-200 shadow-sm transition-all duration-200 flex items-center gap-2 backdrop-blur-md cursor-pointer"
               >
-                <Plus className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+                <Plus className="w-4 h-4 text-cyan-400" />
                 New Discussion
               </button>
             </div>
@@ -130,10 +146,10 @@ export const DashboardPage: React.FC = () => {
         {/* Quick Access Tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {[
-            { label: 'Study Materials', to: '/resources', icon: BookOpen, color: 'text-cyan-500 dark:text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
-            { label: 'Simulations', to: '/simulations', icon: Cpu, color: 'text-purple-500 dark:text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
-            { label: 'Forum', to: '/forum', icon: MessageSquare, color: 'text-emerald-500 dark:text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-            { label: 'Placements', to: '/placements', icon: Briefcase, color: 'text-amber-500 dark:text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
+            { label: 'Study Materials', to: '/resources', icon: BookOpen, color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
+            { label: 'Simulations', to: '/simulations', icon: Cpu, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+            { label: 'Forum', to: '/forum', icon: MessageSquare, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+            { label: 'Placements', to: '/placements', icon: Briefcase, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -141,7 +157,7 @@ export const DashboardPage: React.FC = () => {
                 key={item.to}
                 to={item.to}
                 id={`quick-link-${item.label.toLowerCase().replace(/\s/g, '-')}`}
-                className="group relative overflow-hidden rounded-xl p-4 flex flex-col items-start gap-3 bg-white/80 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-md hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all duration-200"
+                className="group relative overflow-hidden rounded-xl p-4 flex flex-col items-start gap-3 bg-white/75 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/70 dark:border-slate-800/80 shadow-md hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all duration-200"
               >
                 <div className={`p-2.5 rounded-lg border ${item.bg}`}>
                   <Icon className={`w-5 h-5 ${item.color}`} />
@@ -159,7 +175,7 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Bell className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                <Bell className="w-4 h-4 text-amber-400" />
                 <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 tracking-tight">Recent Notices</h2>
               </div>
               <Link
@@ -175,7 +191,7 @@ export const DashboardPage: React.FC = () => {
                 <Link
                   key={notice._id}
                   to="/notices"
-                  className={`rounded-xl p-4 space-y-2 bg-white/85 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-md hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200 ${
+                  className={`rounded-xl p-4 space-y-2 bg-white/80 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/70 dark:border-slate-800/80 shadow-md hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200 ${
                     notice.pinned ? 'border-amber-400/50 dark:border-amber-500/40 bg-amber-500/5' : ''
                   }`}
                 >
@@ -210,7 +226,7 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+                <BookOpen className="w-4 h-4 text-cyan-400" />
                 <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 tracking-tight">Popular Study Materials</h2>
               </div>
               <Link
@@ -242,7 +258,7 @@ export const DashboardPage: React.FC = () => {
                 resources.map((res) => (
                   <div
                     key={res._id}
-                    className="rounded-xl p-3.5 flex items-center justify-between gap-3 bg-white/85 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200"
+                    className="rounded-xl p-3.5 flex items-center justify-between gap-3 bg-white/80 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/70 dark:border-slate-800/80 shadow-sm hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 mb-1 flex-wrap">
@@ -277,7 +293,7 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+                <MessageSquare className="w-4 h-4 text-emerald-400" />
                 <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 tracking-tight">Recent Discussions</h2>
               </div>
               <Link
@@ -308,7 +324,7 @@ export const DashboardPage: React.FC = () => {
                   <Link
                     key={post._id}
                     to={`/forum/${post._id}`}
-                    className="rounded-xl p-3.5 block space-y-1.5 bg-white/85 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200"
+                    className="rounded-xl p-3.5 block space-y-1.5 bg-white/80 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/70 dark:border-slate-800/80 shadow-sm hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200"
                   >
                     <div className="flex items-center gap-1.5">
                       <span
@@ -342,7 +358,7 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                <Briefcase className="w-4 h-4 text-amber-400" />
                 <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 tracking-tight">Active Placement Drives</h2>
               </div>
               <Link
@@ -357,7 +373,7 @@ export const DashboardPage: React.FC = () => {
               {placements.map((drive) => (
                 <div
                   key={drive._id}
-                  className="rounded-xl p-4 space-y-2.5 bg-white/85 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-md hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200"
+                  className="rounded-xl p-4 space-y-2.5 bg-white/80 dark:bg-slate-900/65 backdrop-blur-md border border-slate-200/70 dark:border-slate-800/80 shadow-md hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all duration-200"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
