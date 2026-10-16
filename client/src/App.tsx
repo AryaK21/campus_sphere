@@ -110,12 +110,13 @@ export const App: React.FC = () => {
             {/* Public pages — no sidebar */}
             <Route path="/" element={<AppLayout><LandingPage /></AppLayout>} />
             <Route path="/login" element={<AppLayout><LoginPage /></AppLayout>} />
-            <Route path="/simulations" element={<AppLayout><SimulationsPage /></AppLayout>} />
-            <Route path="/resources" element={<AppLayout><ResourcesPage /></AppLayout>} />
-            <Route path="/forum" element={<AppLayout><ForumPage /></AppLayout>} />
-            <Route path="/forum/:id" element={<AppLayout><ForumPostDetailPage /></AppLayout>} />
-            <Route path="/notices" element={<AppLayout><NoticesPage /></AppLayout>} />
-            <Route path="/placements" element={<AppLayout><PlacementsPage /></AppLayout>} />
+            {/* Core pages with sidebar */}
+            <Route path="/simulations" element={<AppLayout showSidebar><SimulationsPage /></AppLayout>} />
+            <Route path="/resources" element={<AppLayout showSidebar><ResourcesPage /></AppLayout>} />
+            <Route path="/forum" element={<AppLayout showSidebar><ForumPage /></AppLayout>} />
+            <Route path="/forum/:id" element={<AppLayout showSidebar><ForumPostDetailPage /></AppLayout>} />
+            <Route path="/notices" element={<AppLayout showSidebar><NoticesPage /></AppLayout>} />
+            <Route path="/placements" element={<AppLayout showSidebar><PlacementsPage /></AppLayout>} />
 
             {/* OAuth callback */}
             <Route path="/auth/callback" element={<AuthCallback />} />
