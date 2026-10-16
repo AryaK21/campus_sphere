@@ -34,7 +34,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="hidden md:flex flex-col w-56 flex-shrink-0 border-r border-gray-200 dark:border-dark-border bg-white dark:bg-dark-secondary min-h-[calc(100vh-3.5rem)] sticky top-14 self-start">
+    <aside className="hidden md:flex flex-col w-56 flex-shrink-0 border-r border-gray-200 dark:border-dark-border bg-white/95 dark:bg-dark-secondary/95 backdrop-blur-md min-h-[calc(100vh-3.5rem)] sticky top-14 self-start z-20">
       <nav className="flex flex-col gap-0.5 p-3 pt-4">
         {items.map((item) => {
           const Icon = item.icon;
