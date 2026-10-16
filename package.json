@@ -8,7 +8,7 @@
     "dev:client": "cd client && npm run dev",
     "build:server": "cd server && npm run build",
     "build:client": "cd client && npm run build",
-    "build": "npm run build:server && npm run build:client && node -e \"const fs = require('fs'); fs.cpSync('client/dist', 'dist', { recursive: true, force: true });\"",
+    "build": "npm run build:server && npm run build:client && node -e \"const fs = require('fs'); fs.cpSync('client/dist', 'dist', { recursive: true, force: true }); fs.mkdirSync('dist/auth/callback', { recursive: true }); fs.copyFileSync('dist/index.html', 'dist/auth/callback/index.html'); fs.copyFileSync('dist/index.html', 'dist/404.html');\"",
     "start": "cd server && npm start",
     "seed": "cd server && npm run seed"
   },
