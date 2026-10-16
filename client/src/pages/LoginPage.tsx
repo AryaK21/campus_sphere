@@ -63,7 +63,7 @@ export const LoginPage: React.FC = () => {
               Welcome to CampusSphere
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1.5">
-              Sign in with your PCCOE college email
+              Sign in with your @pccoer.in email
             </p>
           </div>
         </div>
